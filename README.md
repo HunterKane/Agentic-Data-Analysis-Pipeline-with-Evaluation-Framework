@@ -161,12 +161,12 @@ Before evaluation, three artificial anomalies and two deliberate correlations ar
 
 | Metric | Baseline (v1) | Fixed (v2) | Δ | p-value |
 |--------|--------------|------------|---|---------|
-| Statistical accuracy | 52% | 87% | +35pp | < 0.001 |
-| Hallucination rate | 34% | 8% | −26pp | < 0.001 |
-| Reasoning coherence (1–5) | 2.8 | 4.4 | +1.6 | < 0.001 |
-| Test selection appropriateness | 61% | 93% | +32pp | < 0.001 |
+| Statistical accuracy | TBD | TBD | TBD | TBD |
+| Hallucination rate | TBD | TBD | TBD | TBD |
+| Reasoning coherence (1–5) | TBD | TBD | TBD | TBD |
+| Test selection appropriateness | TBD | TBD | TBD | TBD |
 
-The largest single-source improvement came from adding the normality check gate before test selection (+18pp on statistical accuracy alone). Hallucination rate was almost entirely resolved by the JSON validation layer — demonstrating that structural enforcement is more reliable than prompt-level instruction for this failure mode.
+> Results will be populated after the N=30 benchmark runs are complete for both prompt versions. Statistical significance will be assessed using a paired Wilcoxon signed-rank test across runs.
 
 ---
 
@@ -261,19 +261,19 @@ The primary deliverable is `notebooks/agentic_eda_pipeline.ipynb`. Sections:
 ## Key Findings & Failure Modes
 
 **Failure 1: Parametric test applied to skewed data**
-The baseline agent applied a t-test to right-skewed income data without checking normality. Fix: a mandatory `check_assumptions` gate before any parametric test call.
+The baseline agent applied a t-test to right-skewed income data without checking normality. Fix: a mandatory `check_assumptions` gate before any parametric test call. [Impact to be quantified after benchmark runs.]
 
 **Failure 2: Correlation interpreted as causation**
-The agent stated "X causes Y" based solely on a Pearson correlation coefficient. Fix: explicit language constraint in the system prompt prohibiting causal language without explicit caveating.
+The agent stated "X causes Y" based solely on a Pearson correlation coefficient. Fix: explicit language constraint in the system prompt prohibiting causal language without explicit caveating. [Frequency to be documented after baseline runs.]
 
 **Failure 3: Hallucinated insights**
-In 34% of baseline runs, the agent asserted findings before calling the relevant test — the reasoning loop short-circuited to a conclusion. Fix: post-hoc JSON validation layer that rejects any finding without a matching tool result. Prompt-level instruction alone reduced this to ~22%; the structural validation layer brought it to 8%.
+The agent asserted findings before calling the relevant test — the reasoning loop short-circuited to a conclusion. Fix: post-hoc JSON validation layer that rejects any finding without a matching tool result. [Baseline rate and post-fix rate to be populated after benchmark.]
 
 **Failure 4: Multiple comparison inflation**
-The agent ran 8 independent tests at α=0.05 without correction, producing an expected 0.4 false positives per run by chance. Fix: automatic Benjamini-Hochberg correction injected when n_tests > 3.
+The agent ran multiple independent tests at α=0.05 without correction, inflating the false positive rate. Fix: automatic Benjamini-Hochberg correction injected when n_tests > 3. [False positive rate to be measured across baseline runs.]
 
 **Failure 5: Premature loop termination**
-The agent stopped at 3 findings and missed 4 of the 5 injected ground truths. Fix: midpoint reflection prompt at turn 6 that explicitly asks the agent to audit its coverage and identify unaddressed hypotheses.
+The agent terminated early and missed injected ground truths. Fix: midpoint reflection prompt at turn 6 that explicitly asks the agent to audit coverage and identify unaddressed hypotheses. [Coverage rate to be measured after runs.]
 
 ---
 
